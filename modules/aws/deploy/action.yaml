@@ -1,0 +1,26 @@
+name: AWS Deploy
+
+on: [workflow_call]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Stop Python processes on EC2
+        uses: ./.github/workflows/aws/stop_python.yml
+
+      - name: Deploy new version to EC2
+        uses: ./.github/workflows/aws/utils.yml
+        with:
+          script: |
+            scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/path/to/deployment/directory
+
+      - name: Run deployment script on EC2
+        uses: ./.github/workflows/aws/utils.yml
+        with:
+          script: |
+            ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'cd /path/to/deployment/directory && ./executor.sh'

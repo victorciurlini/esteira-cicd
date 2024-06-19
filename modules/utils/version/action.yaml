@@ -1,0 +1,48 @@
+name: Verify version of the code
+on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+      - reopened
+
+jobs:
+  verify_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Read current version
+        id: read_current_version
+        run: |
+          echo "current_version=$(cat $GITHUB_WORKSPACE/version.yml)" >> $GITHUB_ENV
+
+      - name: Read requested version
+        id: read_requested_version
+        run: |
+          echo "requested_version=$(cat $GITHUB_WORKSPACE/version.yml)" >> $GITHUB_ENV
+
+      - name: Compare versions
+        id: compare_versions
+        run: |
+          if [[ "${{ env.current_version }}" == "${{ env.requested_version }}" ]]; then
+            echo "Versions match"
+            echo "versions_match=true" >> $GITHUB_ENV
+          else
+            echo "Versions do not match"
+            echo "versions_match=false" >> $GITHUB_ENV
+          fi
+
+      - name: Output version comparison result
+        run: |
+          echo "Versions match: ${{ env.versions_match }}"
