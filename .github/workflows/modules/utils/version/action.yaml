@@ -8,7 +8,8 @@ on:
 
 jobs:
   verify_version:
-    runs-on: ubuntu-latest
+    runs-on: self-host
+    environment: local-host
 
     steps:
       - name: Checkout code
