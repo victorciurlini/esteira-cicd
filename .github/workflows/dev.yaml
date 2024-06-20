@@ -19,8 +19,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: local-host
-    environment: local-host
+    runs-on: self-hosted
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -30,35 +29,3 @@ jobs:
       # Runs a single command using the runners shell
       - name: Code Version
         run: echo Running version 1.0.3
-
-  dev-test:
-  # The type of runner that the job will run on
-    needs: build
-    runs-on: local-host
-    environment: local-host
-
-    steps:
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Verify version of the code
-      - name: Verify version of the code
-        uses: ./.github/workflows/modules/utils/version
-
-      # Runs a code to check and stop all processes in python on EC2
-      # - name: Stop Python processes on EC2
-      #   uses: ./.github/workflows/modules/python/stop
-
-      # # Setup python virtualenv
-      # - name: Setup Python
-      #   uses: ./.github/workflows/modules/python/setup
-
-      # # Deploys the new version of the application to EC2
-      # - name: Deploy new version to EC2
-      #   uses: ./.github/workflows/modules/aws/deploy
-
-      # # Re-run all processes from micro-services
-      # - name: Run Python processes on EC2
-      #   uses: ./.github/workflows/modules/python/run
